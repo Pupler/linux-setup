@@ -17,13 +17,19 @@ print_status() {
 }
 
 if [ "$EUID" -ne 0 ]; then
+    clear
     print_status "Run with sudo: sudo ./setup.sh"
     exit 1
 fi
 
+clear
 print_status "Hi! The script started."
 
 for package in "${PACKAGES[@]}"; do
-    print_status "Installing ${package}..."
-    pacman -S --noconfirm "${package}"
+    if pacman -Q "${package}" &>/dev/null; then
+        print_status "${package} already installed"
+    else
+        print_status "Installing ${package}..."
+        pacman -S --noconfirm "${package}"
+    fi
 done
