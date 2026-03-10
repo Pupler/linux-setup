@@ -33,3 +33,14 @@ for package in "${PACKAGES[@]}"; do
         pacman -S --noconfirm "${package}"
     fi
 done
+
+read -rp "Configure git? (y/n)" git_conf
+if [ "${git_conf}" == "y" ]; then
+    print_status "Configuring git..."
+    read -rp "Your name: " git_name
+    read -rp "Your email: " git_email
+    git config --global user.name "${git_name}"
+    git config --global user.email "${git_email}"
+fi
+
+exit 0
