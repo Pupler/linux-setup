@@ -4,16 +4,38 @@
 
 GREEN='\033[0;32m'
 RESET='\033[0m'
+LOG_FILE="setup.log"
 
 PACKAGES=(
     git
     curl
     vim
     htop
+    firefox
+    telegram-desktop
+    vlc
+    neofetch
+    unzip
+    wget
 )
 
 print_status() {
     echo -e "${GREEN}==>${RESET} $1"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "${LOG_FILE}"
+}
+
+install_yay() {
+    if pacman -Q yay &>/dev/null; then
+        print_status "yay already installed"
+    else
+        print_status "Installing yay..."
+        pacman -S --noconfirm base-devel git
+        cd /tmp || exit 1
+        git clone https://aur.archlinux.org/yay.git
+        cd yay || exit 1
+        makepkg -si --noconfirm
+        cd ~ || exit 1
+    fi
 }
 
 if [ "$EUID" -ne 0 ]; then
@@ -33,6 +55,8 @@ for package in "${PACKAGES[@]}"; do
         pacman -S --noconfirm "${package}"
     fi
 done
+
+install_yay
 
 read -rp "Configure git? (y/n)" git_conf
 if [ "${git_conf}" == "y" ]; then
