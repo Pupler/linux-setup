@@ -32,8 +32,9 @@ install_yay() {
         pacman -S --noconfirm base-devel git
         cd /tmp || exit 1
         git clone https://aur.archlinux.org/yay.git
+        chown -R "${SUDO_USER}:${SUDO_USER}" yay
         cd yay || exit 1
-        makepkg -si --noconfirm
+        sudo -u "${SUDO_USER}" makepkg -si --noconfirm
         cd ~ || exit 1
     fi
 }
@@ -58,7 +59,7 @@ done
 
 install_yay
 
-read -rp "Configure git? (y/n)" git_conf
+read -rp "Configure git? (y/n): " git_conf
 if [ "${git_conf}" == "y" ]; then
     print_status "Configuring git..."
     read -rp "Your name: " git_name
