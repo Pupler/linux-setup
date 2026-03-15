@@ -19,6 +19,11 @@ PACKAGES=(
     wget
 )
 
+AUR_PACKAGES=(
+    visual-studio-code-bin
+    anki
+)
+
 print_status() {
     echo -e "${GREEN}==>${RESET} $1"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "${LOG_FILE}"
@@ -37,6 +42,17 @@ install_yay() {
         sudo -u "${SUDO_USER}" makepkg -si --noconfirm
         cd ~ || exit 1
     fi
+}
+
+install_aur_packages() {
+    for aur_package in "${AUR_PACKAGES[@]}"; do
+        if pacman -Q "${aur_package}" &>/dev/null; then
+            print_status "${aur_package} is already installed"
+        else
+            print_status "Installing ${aur_package} from AUR..."
+            yay -S --noconfirm "${aur_package}"
+        fi
+    done
 }
 
 if [ "$EUID" -ne 0 ]; then
@@ -58,6 +74,7 @@ for package in "${PACKAGES[@]}"; do
 done
 
 install_yay
+install_aur_packages
 
 read -rp "Configure git? (y/n): " git_conf
 if [ "${git_conf}" == "y" ]; then
