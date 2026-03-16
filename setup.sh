@@ -46,6 +46,16 @@ print_warning() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] [WARNING] $1" >> "${LOG_FILE}"
 }
 
+update_system() {
+    print_status "Updating system..."
+
+    if pacman -Syu; then
+        print_success "System updated"
+    else
+        print_error "System update failed"
+    fi
+}
+
 install_packages() {
     for package in "${PACKAGES[@]}"; do
         if pacman -Q "${package}" &>/dev/null; then
@@ -96,6 +106,7 @@ fi
 clear
 print_status "Hi! The script started."
 
+update_system
 install_packages
 install_yay
 install_aur_packages
