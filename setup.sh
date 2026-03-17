@@ -6,6 +6,8 @@ source "$(dirname "$0")/lib/helpers.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/lib/packages.sh"
 
+trap 'print_error "Script failed on line ${LINENO}"' ERR
+
 if [ "$EUID" -ne 0 ]; then
     clear
     print_status "Run with sudo: sudo ./setup.sh"
